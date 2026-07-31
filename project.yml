@@ -1,0 +1,47 @@
+name: TeletaxiPasajero
+options:
+  bundleIdPrefix: com.hdev
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+packages:
+  SocketIO:
+    url: https://github.com/socketio/socket.io-client-swift
+    from: "16.1.0"
+settings:
+  base:
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGNING_ALLOWED: "NO"
+targets:
+  TeletaxiPasajero:
+    type: application
+    platform: iOS
+    sources:
+      - TeletaxiPasajero
+    dependencies:
+      - package: SocketIO
+        product: SocketIO
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hdev.teletaxipasajeros
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.9"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: TeletaxiPasajero/Info.plist
+      properties:
+        CFBundleDisplayName: Teletaxi
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIUserInterfaceStyle: Dark
+        ITSAppUsesNonExemptEncryption: false
+        UIAppFonts:
+          - poppinsbold.ttf
+          - poppinsmedium.ttf
+        NSLocationWhenInUseUsageDescription: "Teletaxi necesita tu ubicación para fijar el punto de recojo y mostrarte en el mapa."

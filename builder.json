@@ -1,0 +1,16 @@
+{
+  "project": "ChapaPasajero",
+  "platform": "ios",
+  "github": {
+    "owner": "henrydelgadodlc",
+    "repo": "ChapaPasajero-iOS"
+  },
+  "ios": {
+    "scheme": "ChapaPasajero"
+  },
+  "flutter": {
+    "watch": {}
+  },
+  "reactNative": {},
+  "mobai": {}
+}
