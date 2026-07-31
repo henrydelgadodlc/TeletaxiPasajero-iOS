@@ -640,11 +640,32 @@ struct HomeView: View {
                 }
             }
             HStack(spacing: 8) {
-                ForEach(vm.categorias) { cat in
+                ForEach(categoriasOrdenadas) { cat in
                     categoriaChip(cat)
                 }
             }
         }
+    }
+
+    // Orden fijo del selector: autos por nivel (Eco, Plus, XL), luego mototaxi, luego moto.
+    private var categoriasOrdenadas: [CategoriaItem] {
+        let orden = ["auto": 0, "mototaxi": 1, "moto": 2, "desarrollo": 3]
+        return vm.categorias.sorted {
+            let a = orden[$0.grupo.lowercased()] ?? 9
+            let b = orden[$1.grupo.lowercased()] ?? 9
+            if a != b { return a < b }
+            if $0.nivel != $1.nivel { return $0.nivel < $1.nivel }
+            return $0.id_categoria < $1.id_categoria
+        }
+    }
+
+    // Ícono del tipo de vehículo (SF Symbols iOS 16). "mototaxi" antes que "moto".
+    private func categoriaIcon(_ cat: CategoriaItem) -> String {
+        let n = cat.nombre.lowercased(); let g = cat.grupo.lowercased()
+        if g == "mototaxi" || n.contains("mototaxi") { return "bus.fill" }
+        if g == "moto" || n.contains("moto") { return "bicycle" }
+        if n.contains("xl") || n.contains("van") { return "car.2.fill" }
+        return "car.fill"
     }
 
     private func categoriaChip(_ cat: CategoriaItem) -> some View {
@@ -657,7 +678,7 @@ struct HomeView: View {
         return Button { vm.selectCategoria(cat) } label: {
             VStack(spacing: 1) {
                 HStack(spacing: 6) {
-                    Image(systemName: cat.grupo == "moto" ? "bicycle" : "car.fill")
+                    Image(systemName: categoriaIcon(cat))
                         .font(.system(size: 13))
                         .foregroundColor(selected ? c.purplePrimary : c.textMuted)
                     Text(cat.nombre)
