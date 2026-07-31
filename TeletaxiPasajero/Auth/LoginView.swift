@@ -40,7 +40,7 @@ struct LoginView: View {
                                 .foregroundColor(p.accent)
                         }
                         Spacer()
-                        Image("LogoChapa")
+                        Image(isDark ? "LogoChapa" : "LogoChapaLight")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 80 * scale, height: 80 * scale)
