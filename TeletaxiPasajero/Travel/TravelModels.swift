@@ -19,6 +19,7 @@ struct TravelInfo: Decodable {
     let lng_driver: String?
     let marca: String?
     let placa: String?
+    let unidad: String?
     let precio: Float?
     let referencia: String?
     let telefono: String?
@@ -33,7 +34,7 @@ struct TravelInfo: Decodable {
     private enum CodingKeys: String, CodingKey {
         case color, conductor, destino, direccion, estado, foto, id,
              lat, lat_destiny, lat_driver, lng, lng_destiny, lng_driver,
-             marca, placa, precio, referencia, telefono, tipo_pago,
+             marca, placa, unidad, precio, referencia, telefono, tipo_pago,
              monto_descuento_codigo, tarifa_pasajero, codigo_verificacion,
              espera_segundos, total_paradas, paradas
     }
@@ -57,6 +58,7 @@ struct TravelInfo: Decodable {
         lng_driver = c.flexString(.lng_driver)
         marca = c.flexString(.marca)
         placa = c.flexString(.placa)
+        unidad = c.flexString(.unidad)
         precio = c.flexFloat(.precio)
         referencia = c.flexString(.referencia)
         telefono = c.flexString(.telefono)

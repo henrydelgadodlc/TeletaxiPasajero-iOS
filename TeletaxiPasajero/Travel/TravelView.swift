@@ -249,6 +249,11 @@ struct TravelView: View {
                     Text("\(vm.info?.marca ?? "—") • \(vm.info?.color ?? "—")")
                         .font(ChapaFont.medium(11))
                         .foregroundColor(c.textMuted)
+                    if let u = vm.info?.unidad, !u.isEmpty {
+                        Text("Unidad \(u)")
+                            .font(ChapaFont.bold(11))
+                            .foregroundColor(ChapaTheme.purplePrimary)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Text(vm.info?.placa ?? "—")

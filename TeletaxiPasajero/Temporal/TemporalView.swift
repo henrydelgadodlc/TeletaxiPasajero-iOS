@@ -269,6 +269,15 @@ struct TemporalView: View {
                         .foregroundColor(c.textMuted)
                         .lineLimit(1)
                     HStack(spacing: 8) {
+                        if let u = offer.unidad, !u.isEmpty {
+                            Text("Unidad \(u)")
+                                .font(ChapaFont.bold(11))
+                                .foregroundColor(c.purpleLight)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(c.purple.opacity(0.15))
+                                .cornerRadius(10)
+                        }
                         Text(offer.placa ?? "—")
                             .font(ChapaFont.bold(11))
                             .foregroundColor(c.purpleLight)
@@ -392,6 +401,9 @@ struct TemporalView: View {
 
                 VStack(alignment: .leading, spacing: 12) {
                     summaryRow(icon: "car.fill", label: "Vehículo", value: "\(offer.marca ?? "—") (\(offer.color ?? "—"))")
+                    if let u = offer.unidad, !u.isEmpty {
+                        summaryRow(icon: "number.circle", label: "N° Unidad", value: u)
+                    }
                     summaryRow(icon: "number", label: "Placa", value: offer.placa ?? "—")
                     if promoDiscount > 0 {
                         summaryRow(
