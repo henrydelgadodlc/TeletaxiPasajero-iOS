@@ -20,7 +20,9 @@ final class TravelViewModel: ObservableObject {
     @Published var shareMessage: String?
     @Published var finishedData: ValorationData?   // navega a valoración
     @Published var exitToHome = false              // cancelado (mío o del conductor)
+    @Published var incomingCall: IncomingCallInfo? // llamada entrante del conductor
 
+    private var callIncomingHandlerId: UUID?
     private var pollTimer: Timer?
     private var receivedSocketUpdate = false
     private var lastTravelStatus: String?
@@ -37,6 +39,7 @@ final class TravelViewModel: ObservableObject {
         }
         Task { await poll() }
         connectSocket()
+        registerCallListener()
     }
 
     func stop() {
@@ -46,6 +49,30 @@ final class TravelViewModel: ObservableObject {
         if id != 0 { ChapaSocket.shared.leavePassengerRoom(id) }
         ChapaSocket.shared.socket?.off("position/\(id)")
         ChapaSocket.shared.socket?.off("chat/\(id)")
+        unregisterCallListener()
+    }
+
+    // Escucha `call:incoming` mientras se ve el viaje: si el conductor llama al
+    // pasajero, se abre la pantalla de llamada entrante (WebRTC, primer plano).
+    // App cerrada/segundo plano requiere PushKit+CallKit+cert VoIP (credenciales)
+    // → pendiente, fuera de este alcance.
+    private func registerCallListener() {
+        guard callIncomingHandlerId == nil, let socket = ChapaSocket.shared.socket else { return }
+        callIncomingHandlerId = socket.on("call:incoming") { [weak self] data, _ in
+            Task { @MainActor in
+                guard let self, self.incomingCall == nil,
+                      let o = data.first as? [String: Any] else { return }
+                self.incomingCall = IncomingCallInfo(
+                    callId: o["call_id"] as? String ?? "",
+                    fromName: o["from_name"] as? String ?? ""
+                )
+            }
+        }
+    }
+
+    private func unregisterCallListener() {
+        if let id = callIncomingHandlerId { ChapaSocket.shared.socket?.off(id: id) }
+        callIncomingHandlerId = nil
     }
 
     // --- SOCKET (position/{id}, chat/{id}) ---

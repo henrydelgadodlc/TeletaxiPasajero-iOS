@@ -11,6 +11,7 @@ struct TravelView: View {
     @State private var showFinishDialog = false
     @State private var showCancelDialog = false
     @State private var showChat = false
+    @State private var showCall = false
 
     private var isDark: Bool { Session.shared.themeMode == 2 }
     private var c: HomeColors { HomeColors(isDark: isDark) }
@@ -58,7 +59,7 @@ struct TravelView: View {
 
                     if isActive {
                         VStack(spacing: 12) {
-                            travelMapButton(icon: "phone.fill") { callDriver() }
+                            travelMapButton(icon: "phone.fill") { startVoiceCall() }
                             ZStack(alignment: .topTrailing) {
                                 travelMapButton(icon: "message.fill") {
                                     vm.hasNewMessage = false
@@ -130,6 +131,31 @@ struct TravelView: View {
                 )
             }
         )
+        .background(
+            EmptyView().fullScreenCover(isPresented: $showCall) {
+                CallView(
+                    vm: CallViewModel(
+                        requestId: Session.shared.currentRequest,
+                        peerName: vm.info?.conductor ?? "Conductor",
+                        mode: .outgoing
+                    ),
+                    onClose: { showCall = false }
+                )
+            }
+        )
+        .background(
+            EmptyView().fullScreenCover(item: $vm.incomingCall) { info in
+                CallView(
+                    vm: CallViewModel(
+                        requestId: Session.shared.currentRequest,
+                        peerName: info.fromName.isEmpty ? (vm.info?.conductor ?? "Conductor") : info.fromName,
+                        mode: .incoming,
+                        callId: info.callId
+                    ),
+                    onClose: { vm.incomingCall = nil }
+                )
+            }
+        )
         .alert("Finalizar viaje", isPresented: $showFinishDialog) {
             Button("Sí, finalizar") { vm.finishTravel() }
             Button("No, continuar", role: .cancel) {}
@@ -145,6 +171,16 @@ struct TravelView: View {
             mapProxy.fit(points: [vm.driverLocation, target])
         } else {
             mapProxy.animate(to: vm.driverLocation)
+        }
+    }
+
+    // Llamada de voz in-app (WebRTC) hacia el conductor. Si no hay una solicitud
+    // activa válida, cae al marcador telefónico nativo como respaldo.
+    private func startVoiceCall() {
+        if Session.shared.currentRequest > 0 {
+            showCall = true
+        } else {
+            callDriver()
         }
     }
 

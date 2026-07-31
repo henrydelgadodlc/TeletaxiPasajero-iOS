@@ -8,6 +8,12 @@ packages:
   SocketIO:
     url: https://github.com/socketio/socket.io-client-swift
     from: "16.1.0"
+  WebRTC:
+    # xcframework binario mantenido por stasel; equivalente de org.webrtc en
+    # Android. Se fija por rango porque cada release sube de major. Usado por la
+    # llamada de voz 1:1 (callModule) del pasajero hacia el conductor.
+    url: https://github.com/stasel/WebRTC
+    from: "120.0.0"
 settings:
   base:
     DEVELOPMENT_TEAM: ""
@@ -23,6 +29,8 @@ targets:
     dependencies:
       - package: SocketIO
         product: SocketIO
+      - package: WebRTC
+        product: WebRTC
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hdev.teletaxipasajeros
@@ -45,3 +53,6 @@ targets:
           - poppinsbold.ttf
           - poppinsmedium.ttf
         NSLocationWhenInUseUsageDescription: "Teletaxi necesita tu ubicación para fijar el punto de recojo y mostrarte en el mapa."
+        NSMicrophoneUsageDescription: "Teletaxi usa el micrófono solo durante las llamadas de voz con tu conductor."
+        UIBackgroundModes:
+          - audio
